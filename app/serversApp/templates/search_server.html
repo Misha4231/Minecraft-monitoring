@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+
+{% block title %}Find a server{% endblock %}
+
+
+{% block content %}
+    <div class="container">
+        <div class="mini-page-container">
+            <h1 class="page-title">Search for a specific server</h1>
+            <p class="error_message">{{ error_message }}</p>
+
+            <form method="post" action="." class="auth-form">
+                {% csrf_token %}
+                <input type="text" name="ip" placeholder="Domain, IP or host:port" class="auth-form__text-field"><br>
+                <button type="submit" class="blue-button">Find</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}

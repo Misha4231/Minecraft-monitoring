@@ -1,0 +1,4 @@
+Change of email for {{ user.email }}
+Click the link below to set a new email
+
+{{ domain }}{% url 'change_email' uidb64=uid token=token encoded_email=email %}

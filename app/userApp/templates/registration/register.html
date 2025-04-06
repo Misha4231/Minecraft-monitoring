@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% load socialaccount %}
+
+
+{% block title %}Sign up{% endblock %}
+
+
+{% block content %}
+    <div class="container">
+        <div class="auth-form-container">
+            <h1 class="page-title">Sign up</h1>
+            <p class="error_message">{{ error_message }}</p>
+            <form method="post" action="." class="auth-form">
+                {% csrf_token %}
+                <input type="email" name="email" class="auth-form__text-field" placeholder="Email">
+                {{ form.captcha }}
+                
+                <button type="submit" class="auth-form__submit-button blue-button">Sign up</button>
+            </form>
+
+            <ul class="auth-social-links">
+                <li>
+                    <a href="{% provider_login_url 'google' process='login' %}?next=/" class="blue-button social-google-button">Google</a>
+                </li>
+                <li>
+                    <a href="{{ discord_url }}" class="blue-button social-discord-button">Discord</a>
+                </li>
+            </ul>
+            
+
+            <div class="auth-bottom-links">
+                <a href="{% url 'login' %}">Sign in</a><br>
+                <a href="{% url 'password_reset' %}">Forgot password?</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

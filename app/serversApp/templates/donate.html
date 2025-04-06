@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Boost the Server{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="diamond-price-container">
+            <h1 class="page-title">To purchase diamonds for the server, you need to:</h1>
+            <br>
+            <p class="donate-info">
+                1) Open the donation page using the button below;<br>
+                2) Fill in the "Name" field;<br>
+                3) In the "Message" field, enter the IP of the server you want to buy diamonds for;<br>
+                4) Complete the payment;<br>
+                <br>
+                Important: If the server IP is entered incorrectly, the diamonds will not be credited automatically.<br>
+                If the diamonds are not credited within 60 minutes, contact us in the Discord channel and we will credit them manually.
+            </p>                                            <!--put the link to your donatello-->
+            <a class="blue-button buy-diamond-button" href="https://donatello.to/">Buy Diamonds</a>
+        </div>
+    </div>
+{% endblock %}

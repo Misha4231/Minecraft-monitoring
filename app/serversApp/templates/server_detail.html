@@ -1,0 +1,179 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ server.title }}{% endblock %}
+
+
+{% block content %}
+    {% if server.carousel %}
+        <div class="carousel">
+            {% if server.carousel.count == 1 %}
+                {% for image in server.carousel.all %}
+                    <img src="{{ image.image.url }}" class="slider_image" alt="slider_image">
+                {% endfor %}
+            {% else %}
+            <div class="swiper-container slider1">
+                
+                <div class="swiper-wrapper">
+                    {% for image in server.carousel.all %}
+                        <div class="swiper-slide">
+                            <div class="image-slider__image">
+                                <img src="{{ image.image.url }}" class="slider_slide-image" alt="slider_image">
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                
+                <div class="swiper-pagination"></div>
+            </div>
+            {% endif %}
+        </div>
+    {% endif %}
+    
+    <div class="container">
+        <div class="small-container server-detail-header">
+            <div class="logo">
+                {% if server.is_icon_auto %}
+                    <img src="" alt="server icon" id="auto-logo">
+                {% else %}
+                    <img src="{{ server.icon.url }}" alt="server icon">
+                {% endif %}
+            </div>
+            <div class="server-detail-header__text-info">
+                <h2 class="server-detail-header__server-title">{{ server.title }}</h2>
+                <p class="server-detail-header__server-short-description">{{ server.short_description }}</p>
+            </div>
+            <div class="header__top-order-container">
+                <a href="{% url 'diamond_price' %}" class="blue-button">Promote server</a>
+                <div class="server-detail-header__top-order">
+                    <img src="{% static 'img/fire.png' %}" alt="fire" class="header__top-order-bg-image">
+                    <span class="header__top-order">{{ server.row_index }}</span>
+                </div>
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="small-container server-detail__info-list">
+            <ul>
+                <li class="detail__info-item">
+                    <div class="detail__info-item__field">Diamonds: </div>
+                    <div class="detail__info-item__answer grey-text">{{ server.diamonds }}</div>
+                    <button class="free_vote_button blue-button" data-link="{% url 'free_daily_vote' server.pk %}">Vote</button>
+                </li>
+                <li class="detail__info-item">
+                    <div class="detail__info-item__field">IP: </div>
+                    <div class="detail__info-item__answer">{{ server.ip }}</div>
+                </li>
+                {% if server.version %}
+                    <li class="detail__info-item">
+                        <div class="detail__info-item__field">Version: </div>
+                        <div class="detail__info-item__answer">{{ server.version }}</div>
+                    </li>
+                {% endif %}
+                <li class="detail__info-item">
+                    <div class="detail__info-item__field">Status: </div>
+                    <div class="detail__info-item__answer blue-text">
+                        {% if server.status %}
+                            Online
+                        {% else %}
+                            Offile
+                        {% endif %}
+                    </div>
+                </li>
+                <li class="detail__info-item">
+                    <div class="detail__info-item__field">Players: </div>
+                    <div class="detail__info-item__answer">
+                        <span class="blue-text">{{ server.curr_online }}</span>/{{ server.max_online }}
+                    </div>
+                </li>
+                {% if server.server_site %}
+                    <li class="detail__info-item">
+                        <div class="detail__info-item__field">Website: </div>
+                        <div class="detail__info-item__answer"><a href="{{ server.server_site }}" class="blue-text">{{ server.server_site }}</a></div>
+                    </li>
+                {% endif %}
+                {% if server.server_discord %}
+                    <li class="detail__info-item">
+                        <div class="detail__info-item__field">Discord: </div>
+                        <div class="detail__info-item__answer"><a href="{{ server.server_discord }}" class="blue-text">{{ server.server_discord }}</a></div>
+                    </li>
+                {% endif %}
+                <li class="detail__info-item">
+                    <div class="detail__info-item__field">Uptime: </div>
+                    <div class="detail__info-item__answer blue-text">{{ uptime }} %</div>
+                </li>
+            </ul>
+        </div> 
+
+        {% if server.full_description %}
+            <hr>
+            <div class="small-container server-detail__description">
+                <h3>About this server:</h3>
+                <p>
+                    {{ server.full_description|linebreaks }}
+                </p>
+            </div>
+        {% endif %}
+
+        
+        {% if server.screenshots.count >= 1 %}
+            <hr>
+            <div class="small-container">
+                <h3 class="shreenshots-label">Screenshots</h3>
+            </div>
+                
+                <div class="server-detail__screenshots">    
+                    <div id="swiper-prev-button">
+                        <img src="{% static 'img/arrow-left.png' %}" alt="">
+                    </div>
+
+                    <div class="swiper-container slider2">
+                        <div class="swiper-wrapper">
+                            {% for photo in server.screenshots.all %}
+                                <div class="swiper-slide">
+                                    <div class="image-slider__image">
+                                        <img src="{{ photo.image.url }}" alt="">
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="swiper-button-prev"></div>
+                        <div class="swiper-button-next"></div>
+                    </div>
+
+                    <div id="swiper-next-button">
+                        <img src="{% static 'img/arrow-right.png' %}" alt="">
+                    </div>
+                </div>
+            
+        {% endif %}
+    </div>
+    
+{% endblock %}
+
+{% block js_include %}
+    <script src="{% static 'js/free_vote.js' %}"></script>
+    <script src="{% static 'js/slider.js' %}"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function(event) {
+            const autoLogo = document.querySelector('#auto-logo')
+            if (autoLogo) {
+                fetch('https://api.mcsrvstat.us/2/{{ server.ip }}')
+                .then((response) => (response.json()))
+                .then((data) => {
+                    autoLogo.src = data.icon
+                })
+            }
+
+            document.querySelector('#swiper-prev-button').addEventListener('click', () => {
+                document.querySelector('.swiper-button-prev').click()
+            })
+            document.querySelector('#swiper-next-button').addEventListener('click', () => {
+                document.querySelector('.swiper-button-next').click()
+            })
+        })
+            
+    </script>
+{% endblock %}

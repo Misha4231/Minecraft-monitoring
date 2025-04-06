@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My servers{% endblock %}
+
+
+{% block content %}
+    <div class="container">
+        <div class="account">
+            <div class="account-top-title">
+                <h1 class="page-title">Profile</h1>
+                <a href="{% url 'logout' %}" class="transparent-button">Log out</a>
+            </div>
+            <hr class="account-line">
+
+            <div class="account__second-header">
+                <a href="{% url 'account' %}" class="account__second-header__link {% if second_header_section == 'settings' %}active{% endif %}">Settings</a>
+                <a href="" class="account__second-header__link {% if second_header_section == 'my_servers' %}active{% endif %}">My Servers</a>
+            </div>
+
+            {% if servers %}
+                <table class="my-servers__table">
+                    <thead>
+                        <tr class="my-servers-table__row">
+                            <td class="my-servers-table__record">Server</td>
+                            <td class="my-servers-table__record phone-remove-column">Version</td>
+                            <td class="my-servers-table__record phone-remove-column">Players</td>
+                            <td class="my-servers-table__record">Diamonds</td>
+                            <td class="my-servers-table__record"></td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for server in servers %}
+                            <tr class="my-servers-table__row {% if server.title %}my-servers-table__link-row" data-link="{% url 'server_detail' server.id %}"{% else %}"{% endif %}>
+                                <td class="my-servers-table__record">
+                                    {% if server.title %}
+                                        {{ server.title }}
+                                    {% else %}
+                                        Not specified
+                                    {% endif %}
+                                </td>
+                                <td class="my-servers-table__record phone-remove-column">
+                                    {% if server.version %}
+                                        {{ server.version }}
+                                    {% else %}
+                                        Not specified
+                                    {% endif %}
+                                </td>
+                                <td class="my-servers-table__record phone-remove-column">
+                                    <span class="blue-text">{{ server.curr_online }}</span>/{{ server.max_online }}
+                                </td>
+                                <td class="my-servers-table__record diamond-my-servers-table__record">
+                                    <img src="{% static 'img/diamond.png' %}" class="diamond" alt="Diamond"><br>
+                                    <span class="grey-text small-text">{{ server.diamonds }}</span>
+                                </td>
+                                <td class="my-servers-table__record icons-column">
+                                    <a href="{% url 'diamond_price' %}" class="table__record-icon" data-title="Promote">
+                                        <img src="{% static 'img/rocket.svg' %}" alt="Promote">
+                                    </a>
+                                    {% if user in server.owners.all or user.is_superuser %}
+                                        <a href="{% url 'edit_server_settings' server.id %}" class="table__record-icon" data-title="Edit">
+                                            <img src="{% static 'img/pen.svg' %}" alt="Edit">
+                                        </a>
+                                    {% else %}
+                                        <a href="https://discord.gg/UR67xcrD63" class="table__record-icon" data-title="Confirm">
+                                            <img src="{% static 'img/tick.svg' %}" alt="Confirm">
+                                        </a>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            <tr class="tr-spancer"></tr>
+                        {% empty %}
+                            <p>No servers yet.</p>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>No servers yet.</p>
+            {% endif %}
+            <a href="{% url 'add_server' %}" class="blue-button server-add-button">Add server</a>
+        </div>
+    </div>
+
+    <script>
+        document.querySelectorAll('.my-servers-table__link-row').forEach(function(serverEl){
+            
+            serverEl.addEventListener('click', function(e) {
+                const link = serverEl.dataset.link
+                window.location.href = link
+            })
+
+        })
+    </script>
+{% endblock %}

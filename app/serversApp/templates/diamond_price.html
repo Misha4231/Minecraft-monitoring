@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Promote server{% endblock %}
+
+
+{% block content %}
+    <div class="container">
+        <div class="diamond-price-container">
+            <h1 class="page-title">Buy diamonds for the server</h1>
+            
+            <div class="diamonds-price">
+                <div class="diamonds-price-left">
+                    <img src="{% static 'img/many-diamonds.png' %}" alt="" class="many-diamonds-icon">
+                    <p class="diamonds-price-text">{{ diamonds }}</p>
+                </div>
+                <div class="diamonds-price-right">
+                    <p class="diamonds-price-text blue-text">{{ uah }} USD</p>
+                    <a class="blue-button" href="{% url 'donate_info' %}">Buy</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

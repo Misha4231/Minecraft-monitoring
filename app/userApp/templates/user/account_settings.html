@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+
+{% block title %}Profile{% endblock %}
+
+
+{% block content %}
+    <div class="container">
+        <div class="account">
+            <div class="account-top-title">
+                <h1 class="page-title">Profile</h1>
+                <a href="{% url 'logout' %}" class="transparent-button">Log out</a>
+            </div>
+            <hr class="account-line">
+
+            <div class="account__second-header">
+                <a href="{% url 'account' %}" class="account__second-header__link {% if second_header_section == 'settings' %}active{% endif %}">Settings</a>
+                <a href="{% url 'my_servers' %}" class="account__second-header__link {% if second_header_section == 'my_servers' %}active{% endif %}">My Servers</a>
+            </div>
+            {% if user.is_social == False %}
+                <form method="post" class="account-form">
+                    {% csrf_token %}
+                    <p class="error_message">{{ error_message }}</p>
+
+                    <p class="account-form__label">Email</p>
+                    <input type="email" name="new_email" class="auth-form__text-field" value="{{ user.email }}">
+
+                    <p class="account-form__label">Password</p>
+                    <input type="password" name="new_password" class="auth-form__text-field">
+
+                    <button type="submit" class="blue-button">Save</button>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

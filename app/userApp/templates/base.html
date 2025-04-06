@@ -1,0 +1,139 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/reset.css' %}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css"/>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="icon" type="image/x-icon" href="{% static 'img/favicon.ico' %}">
+</head>
+<body>
+    <style>
+        body{
+            background-image: url('{% static "img/background.jpg" %}');
+        }
+        .header__list .blue-button{
+            padding-right: 7px;
+            padding-left: 7px;
+            position: relative;
+        }
+        .header__list-left{
+            margin-right: 20px;
+        }
+        .current-video-banner{
+            position: relative;
+            cursor: pointer;
+            width: 468px;
+            height: 60px;
+        }
+        .current-video-banner img,.current-video-banner video{
+            height: 100%;
+            width: 100%;
+        }
+        .current-screenshot:hover::before,.current-carousel:hover::before,.current-video-banner:hover::before{
+            content: 'Видалити';
+            position: absolute;
+            display: grid;
+            align-items: center;
+            background-color: var(--red);
+            font-size: var(--font24);
+            height: 100%;
+            width: 100%;
+            opacity: 0.5;
+            text-align: center;
+            color: var(--white);
+            font-weight: var(--boldweight);
+        }
+    </style>
+    <div class="body_error-notification body-notification"></div>
+    <div class="body_success-notification body-notification"></div>
+    <div class="all_wrapper">
+        <header> 
+            <div class="container">
+                
+                <div class="header__body">
+                    <a href="/" class="header__logo">
+                        <h1>Minecraft <br>Monitoring</h1>
+                    </a>
+                    <div class="header__burger">
+                        <span></span>
+                    </div>
+                    <nav class="header__menu">
+                        <ul class="header__list">
+                            <div class="header__list-left">
+                                <li {% if section == 'home' %}class="active_section"{% endif %}>
+                                    <a href="/" class="header__link">Home</a>
+                                </li>
+                                <li {% if section == 'add' %}class="active_section"{% endif %}>
+                                    <a href="{% url 'add_server' %}" class="header__link">Add server</a>
+                                </li>
+                                <li class="header__search-link {% if section == 'search' %}active_section{% endif %}">
+                                    <a href="{% url 'search_server' %}" class="header__link">Find server</a>
+                                </li>
+                            </div>
+                            <div class="header__list-right">
+                                {% if user.is_authenticated %}
+                                    <li {% if section == 'account' %}class="active_section"{% endif %}>
+                                        <a href="{% url 'account' %}" class="header__link">Profile</a>
+                                    </li>
+                                {% else %}
+                                    <li {% if section == 'login' %}class="active_section"{% endif %}>
+                                        <a href="{% url 'login' %}" class="header__link">Sign in</a>
+                                    </li>
+                                    <li {% if section == 'register' %}class="active_section"{% endif %}>
+                                        <a href="{% url 'register' %}" class="header__link">Sign up</a>
+                                    </li>
+                                {% endif %}
+                                <li class="header__button-link">
+                                    <a href="{% url 'diamond_price' %}" class="blue-button">Promote server</a>
+                                </li>
+                            </div>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </header>
+        <div class="wrapper">
+            {% block content %}{% endblock %}
+        </div>
+        <footer>
+            <div class="container">
+                <div class="footer-columns">
+                    <ul class="footer__column-list">
+                        <li class="footer__column-title">Monitoring</li>
+                        <li class="footer__column-link">
+                            <a href="{% url 'diamond_price' %}">Promote server</a>
+                        </li>
+                        <li class="footer__column-link">
+                            <a href="{% url 'add_server' %}">Add server</a>
+                        </li>
+                        <li class="footer__column-link">
+                            <a href="{% url 'search_server' %}">Find server</a>
+                        </li>
+                    </ul>
+                    <ul class="footer__column-list">
+                        <li class="footer__column-title">Useful</li>
+                        <li class="footer__column-link">
+                            <a href="{% url 'articles_list' %}">Articles</a>
+                        </li>
+                    </ul>
+                    <ul class="footer__column-list">
+                        <li class="footer__column-title">Follow us</li>
+                        <li class="footer__column-link">
+                            <a href="">Discord</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </footer>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.7.0.js" integrity="sha256-JlqSTELeR4TLqP0OG9dxM7yDPqX1ox/HfgiSLBj8+kM=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+    <script src="{% static 'js/main.js' %}"></script>
+    {% block js_include %}{% endblock %}
+</body>
+</html>

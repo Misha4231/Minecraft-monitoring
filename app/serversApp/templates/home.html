@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load filters %}
+
+{% block title %}Minecraft Servers{% endblock %}
+
+
+{% block content %}
+    <div class="container">
+        <table class="home-table">
+            <thead>
+                <tr>
+                    <th class="blue-row number-row">№</th>
+                    <th class="server-row">Server</th>
+                    <th class="blue-row">Version</th>
+                    <th class="blue-row">Players</th>
+                    <th class="blue-row">Diamonds</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for server in servers %}
+                    {% if server.title %}
+                        <tr data-link="{% url 'server_detail' server.id %}" class="table-row server-link">
+                            <td class="blue-row number-row">{{ server.row_number }}</td>
+                            <td class="server-row">
+                                <div class="server-row__flex">
+                                    <div class="server-row__flex-left">
+                                        <h4>{{ server.title }}</h4>
+                                        <p class="grey-text">{{ server.short_description }}</p>
+                                    </div>
+                                    {% if server.server_banner %}
+                                        {% if server.server_banner.url|endswith:".mp4" or server.server_banner.url|endswith:".gif" %}
+                                            <video src="{{ server.server_banner.url }}" class="video-banner" autoplay loop muted></video>
+                                        {% else %}
+                                            <img class="image-banner" src="{{ server.server_banner.url }}" alt="{{ server.title }}">
+                                        {% endif %}
+                                    {% endif %}
+
+                                    {% if server.server_banner %}
+                                        <div class="server-row__flex-right">
+
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </td>
+                            <td class="blue-row">{{ server.version }}</td>
+                            <td class="blue-row"><span class="blue-text">{{ server.curr_online }}</span>/{{ server.max_online }}</td>
+                            <td class="blue-row">
+                                <button class="free_vote_button blue-button" data-link="{% url 'free_daily_vote' server.pk %}">Vote</button>
+                                <img src="{% static 'img/diamond.png' %}" class="diamond" alt="Алмаз"><br>
+                                <span class="grey-text small-text">{{ server.diamonds }}</span>
+                            </td>
+                        </tr>
+                        <tr class="tr-spancer"></tr>
+                    {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+        <div class="phone-server-list">
+            {% for server in servers %}
+                {% if server.title %}
+                    <div class="phone-server__item server-link" data-link="{% url 'server_detail' server.id %}">
+                        {% if server.server_banner %}
+                            {% if server.server_banner.url|endswith:".mp4" or server.server_banner.url|endswith:".gif" %}
+                                <video src="{{ server.server_banner.url }}" class="phone_video-banner" autoplay loop muted></video>
+                            {% else %}
+                                <img class="phone_image-banner" src="{{ server.server_banner.url }}" alt="{{ server.title }}">
+                            {% endif %}
+                        {% endif %}
+                        <div class="server__item-info">
+                            <h4>{{ server.title }}</h4>
+                            <p class="grey-text">{{ server.short_description }}</p>
+
+                            <ul class="phone__info-list">
+                                <li class="phone__info-item">Version <span class="phone__info-item__answer">{{ server.version }}</span></li>
+                                <li class="phone__info-item">Players <span class="phone__info-item__answer"><span class="blue-text">{{ server.curr_online }}</span>/{{ server.max_online }}</span></li>
+                                <li class="phone__info-item">Diamonds <img src="{% static 'img/diamond.png' %}" class="diamond" alt="Алмаз"><span class="phone__info-item__answer grey-text small-text">{{ server.diamonds }}</span><button class="free_vote_button blue-button phone_free_vote_button" data-link="{% url 'free_daily_vote' server.pk %}">Vote</button></li>
+                            </ul>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        {% if page.has_next %}
+            <a href="?page={{ page.next_page_number }}" class="blue-button more-button">Show more</a>
+        {% endif %}
+
+        <div class="articles">
+            {% for article in articles %}
+                <a href="{% url 'article_detail' article.pk %}" class="article-col">
+                    <div class="article-img-wrapper">
+                        <img src="{{ article.image.url }}" alt="{{ article.title }}">
+                    </div>
+                    <h4 class="article-title">
+                        {{ article.title }}
+                    </h4>
+                </a>
+            {% endfor %}
+        </div>
+
+        <div class="home-bottom-info">
+            <img src="{% static 'img/image 2.png' %}">
+            <p>
+                Spending time in the game can become monotonous if you log in to the same Minecraft game server every day. The presented monitoring allows you to diversify the gaming experience, offering users a variety of foreign and Russian resources. Log in through different IPs of Minecraft servers, small or large, well-known or new. Set up various combinations of filters with game versions, mods, mini-games and plugins to find the version of your dream you need. Add your game resource data to our Minecraft server monitoring to attract more players. Follow the personal page of your project and update the information more often. Upload video files with reviews and screenshots of your project and get additional positions in the rating. But do not forget: only projects that work without interruptions and with good uptime can stay in the top places on the server monitoring list.
+            </p>
+        </div>
+    </div>
+
+    <script src="{% static 'js/free_vote.js' %}"></script>
+    <script>
+        document.querySelectorAll('.server-link').forEach(function(serverEl){
+            
+            serverEl.addEventListener('click', function(e) {
+                if (!e.target.classList.contains('free_vote_button')){
+                    const link = serverEl.dataset.link
+                    window.location.href = link
+                }
+
+            })
+
+        })
+    </script>
+{% endblock %}

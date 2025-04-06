@@ -1,0 +1,233 @@
+{% extends 'base.html' %}
+{% load filters %}
+
+{% block title %}Edit Server{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h1 class="form-peace-title">Server Information</h1>
+
+        <form action="" method="post" enctype="multipart/form-data" class="server_edit_form">
+            {% csrf_token %}
+            <p class="server_edit_form__input-title">Server Name</p>
+            <input type="text" name="title" value="{% if server.title %}{{ server.title }}{% endif %}" class="server_edit_form__text-input">
+            
+            <p class="server_edit_form__input-title">User Address</p>
+            <input type="text" name="ip" value="{% if server.ip %}{{ server.ip }}{% endif %}" class="server_edit_form__text-input">
+
+            <p class="server_edit_form__input-title">Short Description</p>
+            <input type="text" name="short_description" value="{% if server.short_description %}{{ server.short_description }}{% endif %}" class="server_edit_form__text-input">
+            
+            <p class="server_edit_form__input-title">Server Website</p>
+            <input type="text" name="server_site" value="{% if server.server_site %}{{ server.server_site }}{% endif %}" class="server_edit_form__text-input">
+            
+            <p class="server_edit_form__input-title">Server Discord</p>
+            <input type="text" name="server_discord" value="{% if server.server_discord %}{{ server.server_discord }}{% endif %}" class="server_edit_form__text-input">
+            
+            <p class="server_edit_form__input-title">Full Description</p>
+            <textarea name="full_description" class="server_edit_form__textarea server_edit_form__text-input">{% if server.full_description %}{{ server.full_description }}{% endif %}</textarea>
+            <p class="server_edit_form__input-title">Version</p>
+            <input type="text" name="version" value="{% if server.version %}{{ server.version }}{% endif %}" class="server_edit_form__text-input">
+            
+
+            <h1 class="form-peace-title">Graphics</h1>
+
+            <p class="server_edit_form__input-title">Server Logo</p>
+            <input type="checkbox" name="is_icon_auto" id="is_icon_auto-input" {% if server.is_icon_auto %}checked{% endif %}> Auto-detect
+            <div class="logo-input-container">
+                <div class="logo-drop-box drop-box"></div>
+                <p class="logo-error-message error_message">{{ icon_error }}</p>
+                <p class="server_edit_form__inputdescription">To upload an image, click inside the dashed area or drag and drop the file. Accepted image format: <span class="blue-text">64x64</span>. Only <span class="blue-text">JPE, JPEG, PNG, and JPG</span> are allowed.</p>
+                <input type="file" name="icon" id="icon-input" value="{% if server.icon %}{{ server.icon }}{% endif %}" class="server_edit-file-input">
+            </div>
+
+            <br><br>
+            {% if server.server_banner %}
+                {% if server.server_banner.url|endswith:".mp4" or server.server_banner.url|endswith:".gif" %}
+                    <div class="current-video-banner" data-link="{% url 'delete_banner_image' server.id %}">
+                        <video src="{{ server.server_banner.url }}" autoplay loop muted></video>
+                    </div>
+                {% else %}
+                    <div class="current-video-banner" data-link="{% url 'delete_banner_image' server.id %}">
+                        <img src="{{ server.server_banner.url }}" alt="{{ server.title }}">
+                    </div>
+                {% endif %}
+            {% endif %}
+
+            <p class="server_edit_form__input-title">Server Banner</p>
+            <div class="banner-drop-box drop-box"></div>
+            <p class="banner-error-message error_message">{{ banner_error }}</p>
+            <p class="server_edit_form__inputdescription">To upload a file, click inside the dashed area or drag and drop the file. Accepted image format: <span class="blue-text">468x60</span>. Only <span class="blue-text">JPE, JPEG, PNG, JPG, GIF, and MP4</span> are allowed.</p>
+            <input type="file" name="server_banner" class="banner-input server_edit-file-input">
+
+
+            <div class="current-screenshots">
+                {% for screenshot in server.screenshots.all %}
+                    <div class="current-screenshot" data-req_link="{% url 'delete_screenshot' server.pk screenshot.pk %}">
+                        <img src="{{ screenshot.image.url }}" alt="">
+                    </div>
+                {% endfor %}
+            </div>
+
+            <p class="server_edit_form__input-title">Server Screenshots</p>
+            <div class="screenshots-drop-box drop-box"></div>
+            <p class="screenshot-error-message error_message">{{ scheenshots_error }}</p>
+            <p class="server_edit_form__inputdescription">To upload a file, click inside the dashed area or drag and drop the file. Accepted image format: <span class="blue-text">230x160</span>. Only <span class="blue-text">JPE, JPEG, PNG, and JPG</span> are allowed.</p>
+            <input type="file" name="screenshots" class="screenshots-input server_edit-file-input" multiple>
+
+
+            <div class="current-carousel-images">
+                {% for carousel in server.carousel.all %}
+                    <div class="current-carousel" data-req_link="{% url 'delete_carousel_image' server.pk carousel.pk %}">
+                        <img src="{{ carousel.image.url }}" alt="">
+                    </div>
+                {% endfor %}
+            </div>
+
+            <p class="server_edit_form__input-title">Carousel</p>
+            <div class="carousel-drop-box drop-box"></div>
+            <p class="carousel-error-message error_message">{{ carousel_error }}</p>
+            <p class="server_edit_form__inputdescription">To upload a file, click inside the dashed area or drag and drop the file. Accepted image format: <span class="blue-text">1920x600</span>. Only <span class="blue-text">JPE, JPEG, PNG, and JPG</span> are allowed.</p>
+            <input type="file" name="carousel" class="carousel-input server_edit-file-input" multiple>
+
+
+            <button type="submit" class="blue-button">Save</button>
+        </form>
+    </div>
+
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function(event) {
+            try{
+                document.querySelector('.current-video-banner').addEventListener('click',(e) => {
+                fetch(document.querySelector('.current-video-banner').dataset.link)
+                document.querySelector('.current-video-banner').style.display = 'none'
+                })
+            } catch{
+
+            }
+
+
+            document.querySelectorAll('.current-screenshot').forEach(function (screenshot){
+                screenshot.addEventListener('click',(e) => {
+                    fetch(screenshot.dataset.req_link)
+                    screenshot.style.display = 'none'
+                })
+            })
+
+            document.querySelectorAll('.current-carousel').forEach(function (carouselImage){
+                carouselImage.addEventListener('click',(e) => {
+                    fetch(carouselImage.dataset.req_link)
+                    carouselImage.style.display = 'none'
+                })
+            })
+
+            const LogoDropZone = document.querySelector('.logo-drop-box')
+            const LogoInput = document.querySelector('#icon-input')
+            const LogoInputContainer = document.querySelector('.logo-input-container')
+            console.log(123);
+            LogoDropZone.addEventListener('click',() => {
+                
+                LogoInput.click()
+            })
+            LogoDropZone.addEventListener('dragover', (e) => {
+                e.preventDefault()
+                LogoDropZone.classList.add('dragover')
+            })
+            LogoDropZone.addEventListener('dragleave', () => {
+                LogoDropZone.classList.remove('dragover');
+            });
+            LogoDropZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                LogoDropZone.classList.remove('dragover');
+                const files = e.dataTransfer.files;
+                
+                LogoInput.files = files;
+            });
+
+            LogoInput.addEventListener('change', (e) => {
+                document.querySelector('.logo-error-message').textContent = 'Logo uploaded and will be shown after pressing the "Save" button'
+            })
+
+            const autoLogoCheckBox = document.querySelector('#is_icon_auto-input')
+            autoLogoCheckBox.checked ? LogoInputContainer.style.display = 'none' : LogoInputContainer.style.display = 'block'
+
+            autoLogoCheckBox.addEventListener('input', function(e){
+                autoLogoCheckBox.checked ? LogoInputContainer.style.display = 'none' : LogoInputContainer.style.display = 'block'
+            })
+
+
+            const BannerDropZone = document.querySelector('.banner-drop-box')
+            const BannerInput = document.querySelector('.banner-input')
+            BannerDropZone.addEventListener('click',() => {
+                BannerInput.click()
+            })
+            BannerDropZone.addEventListener('dragover', (e) => {
+                e.preventDefault()
+                BannerDropZone.classList.add('dragover')
+            })
+            BannerDropZone.addEventListener('dragleave', () => {
+                BannerDropZone.classList.remove('dragover');
+            });
+            BannerDropZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                BannerDropZone.classList.remove('dragover');
+                const files = e.dataTransfer.files;
+                
+                BannerInput.files = files;
+            });
+
+            BannerInput.addEventListener('change', (e) => {
+                document.querySelector('.banner-error-message').textContent = 'Banner uploaded and will be shown after pressing the "Save" button'
+            })
+
+
+            const ScreenshotsDropZone = document.querySelector('.screenshots-drop-box')
+            const ScreenshotsInput = document.querySelector('.screenshots-input')
+            ScreenshotsDropZone.addEventListener('click',() => {
+                ScreenshotsInput.click()
+            })
+            ScreenshotsDropZone.addEventListener('dragover', (e) => {
+                e.preventDefault()
+                ScreenshotsDropZone.classList.add('dragover')
+            })
+            ScreenshotsDropZone.addEventListener('dragleave', () => {
+                ScreenshotsDropZone.classList.remove('dragover');
+            });
+            ScreenshotsDropZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                ScreenshotsDropZone.classList.remove('dragover');
+                const files = e.dataTransfer.files;
+                ScreenshotsInput.files = files;
+            });
+
+            ScreenshotsInput.addEventListener('change', (e) => {
+                document.querySelector('.screenshot-error-message').textContent = 'Screenshots uploaded and will be shown after pressing the "Save" button'
+            })
+
+            const CarouselDropZone = document.querySelector('.carousel-drop-box')
+            const CarouselInput = document.querySelector('.carousel-input')
+            CarouselDropZone.addEventListener('click',() => {
+                CarouselInput.click()
+            })
+            CarouselDropZone.addEventListener('dragover', (e) => {
+                e.preventDefault()
+                CarouselDropZone.classList.add('dragover')
+            })
+            CarouselDropZone.addEventListener('dragleave', () => {
+                CarouselDropZone.classList.remove('dragover');
+            });
+            CarouselDropZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                CarouselDropZone.classList.remove('dragover');
+                const files = e.dataTransfer.files;
+                CarouselInput.files = files;
+            });
+
+            CarouselInput.addEventListener('change', (e) => {
+                document.querySelector('.carousel-error-message').textContent = 'Carousel images uploaded and will be shown after pressing the "Save" button'
+            })
+        })
+        
+    </script>
+{% endblock %}
